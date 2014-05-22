@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EA6AA084-E9EF-4769-9493-647935896C5B}</ProjectGuid>
+    <ProjectGuid>{E1AA810D-67C7-4860-BADB-209381421F11}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>histogramequlization</RootNamespace>
+    <RootNamespace>inversion</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -140,7 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="histogram equilization.cpp" />
+    <ClCompile Include="inversion_image.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
