@@ -40,6 +40,10 @@ RNG rng;
 
 int main()
 {
+
+	ofstream fil_X;
+	float m_sum = 0;
+	fil_X.open("X.txt", ios::app);
 	//for the input frame no
 	string a = "f (";
 	string b = ").png";
@@ -61,22 +65,21 @@ int main()
 	Rect rec(175, 210, 42, 31);
 
 	cout << rec.x << " " << rec.y << "  " << rec.width << "  " << rec.height << "\n";
-	
+	fil_X << " car cordinates   " << rec << "\n\n";
 	Mat car=src(rec);
 	namedWindow("cropped");
 	imshow("cropped", car);
 	MatND car_hist = LABhistogram(car);
-
+	fil_X << "Car histogram " << car_hist << "\n\n\n";
 	cout << "1  ";
 
 	f = f + 1;
 
 	// defining the State vector for the particle
-	Mat x_init = (Mat_<float>(6, 1) << rec.x, rec.y, 0, 0, rec.width / rec.height, rec.height);
+	Mat x_init = (Mat_<float>(6, 1) << rec.x, rec.y, 0, 0, (float)(rec.width) / (float)(rec.height), rec.height);
+	fil_X << "Initial state vector " << x_init << "\n\n\n";
+
 	
-	//creating a round box
-	rectangle(frame1, Point(rec.x, rec.y), Point(rec.x+rec.height, rec.y+rec.width), Scalar(0, 255, 0), 1);
-	//rectangle(frame1, rec, 1, 1, 8, 0);
 	//Minimum values for the car box
 
 
@@ -91,17 +94,22 @@ int main()
 
 	cout << "3  ";
 
+
+	fil_X << "Particle intitalisation   \n\n";
 	//initalising the particles
 	for (int i = 0; i < N; i++)
 	{
+
+
 		particle[i] = (Mat_<float>(6, 1) << 0, 0, 0, 0, 0, 0);
 		particle[i].at<float>(0, 0) = rec.x + distribution(generator);//x
 		particle[i].at<float>(1, 0) = rec.y + distribution(generator);//y
 		particle[i].at<float>(2, 0) = 0;//vel(x)
 		particle[i].at<float>(3, 0) = 0;//vel(y)
-		particle[i].at<float>(4, 0) = (float)(rec.width)/(float)rec.height;// min(0.66 + abs(rng.uniform(0.f, 1.f)), MAX_a);//a
+		particle[i].at<float>(4, 0) =  min(0.66 + abs(rng.uniform(0.f, 1.f)), MAX_a);//a
 		particle[i].at<float>(5, 0) = rec.height;// +10 + rng.uniform(0, 1);//vel(h)
 		weight[i] = 1.0 / N;
+		fil_X << "Particle " <<i<<"   "<< particle[i]<<"  "<<weight[i] << "\n";
 	}
 
 
@@ -110,14 +118,15 @@ int main()
 	//here the video starts
 	while (1)
 	{
-
+		fil_X << "Frame  " <<f << "\n\n";
 		//cout << "5 ";
 		frame1 = imread(a + intToString(f) + b);
 		f = f + 1;
 		//motion predict
-		cout << "go motion predict \n ";
+		fil_X << "going to  motion predict \n\n\n ";
 		motionpredict(particle,N,frame1.cols-1,frame1.rows-1);
 		cout << "came from motion  \n";
+		 
 		 
 		//observation model and weigh assignment
 		cout << "go to observation\n";

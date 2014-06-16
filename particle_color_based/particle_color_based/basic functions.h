@@ -41,14 +41,14 @@ float x_n, y_n, u_n, v_n;
 void motionpredict(Mat particles[],int no_of_particles,int width,int height)
 {
 	static int abc = 0;
-	//ofstream fil_X;
-	//fil_X.open("X.txt", ios::app);
-	//fil_X << "\n\n\nFrame  " << ++abc << "\n\n";
+	ofstream fil_X;
+	fil_X.open("X.txt", ios::app);
+	 
 	//cout << "6 ";
 	for (int i = 0; i < no_of_particles; i++)
 	{
 
-		//fil_X << "Before Particle " <<i<< " " << particles[i] << "  "  << "\n";
+		fil_X << "Before Particle " <<i<< " " << particles[i] << "  "  << "\n";
 		//cout << "7 ";
 		x_n = distribution2(generator2);
 		y_n = distribution2(generator2);
@@ -57,7 +57,10 @@ void motionpredict(Mat particles[],int no_of_particles,int width,int height)
 		//cout << "8 ";
 		Mat Q = (Mat_<float>(6, 1) << x_n, y_n, u_n, v_n, 0, 0);
 		//cout << "9 ";
+		fil_X << " Noise " << Q << "\n";
+
 		particles[i] = F*particles[i] + Q;
+		fil_X << "After A* " << particles[i]<<"\n";
 		//cout << "11 ";
 
 		//checking for x and y value
@@ -84,7 +87,7 @@ void motionpredict(Mat particles[],int no_of_particles,int width,int height)
 			particles[i].at<float>(4, 0) = min(particles[i].at<float>(4, 0), MIN_a);
 		}
 
-		//fil_X << "After Particle " << i << " " << particles[i] << "  " << "\n\n";
+		fil_X << "After boundary checks1 " << i << " " << particles[i] << "  " << "\n\n";
 	}
 
 
@@ -128,7 +131,7 @@ void observationmodel(Mat particles[], float weight[],Mat image, MatND target, i
 	static int abc = 0;
 	float w, h;
 	ofstream fil_X;
-	float m_sum = 0;
+	float w_max = 0;;
 	fil_X.open("X.txt", ios::app); cout << " i values\n";
 	fil_X << "\n\n\nFrame at observation  " << ++abc << "\n\n";
 	for (int i = 0; i < n; i++)
@@ -153,7 +156,7 @@ void observationmodel(Mat particles[], float weight[],Mat image, MatND target, i
 		h = max(h, MIN_h);
 		w = max(MIN_h*MIN_a, w);
 
-		if ((c + w) > width)
+		if ((c + w) > width)	
 			w = width - c;
 		if ((r + h)>height)
 			h = height - r;
@@ -172,18 +175,19 @@ void observationmodel(Mat particles[], float weight[],Mat image, MatND target, i
 		//bhattacharya distance
 		// imshow("cropedimage", like_li);
 		weight[i] = 1-compareHist(target, hist_like_li, 3);
-
+		if (w_max < weight[i])
+			w_max = weight[i];
 		fil_X << "Particle "<< " " << particles[i] << "  " << weight[i] << "\n";
 		//cout << weight[i] << "\n";
 		//waitKey(4000);
 		 //normalizing the weights
-		m_sum += weight[i];
+		
 
 
 	}
 	for (int i = 0; i < n; i++)
 	{
-		weight[i] = weight[i] / m_sum;
+		weight[i] = weight[i] / w_max;
 	}
 
 
