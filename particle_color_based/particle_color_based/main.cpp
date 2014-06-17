@@ -110,6 +110,7 @@ int main()
 		particle[i].at<float>(5, 0) = rec.height;// +10 + rng.uniform(0, 1);//vel(h)
 		weight[i] = 1.0 / N;
 		fil_X << "Particle " <<i<<"   "<< particle[i]<<"  "<<weight[i] << "\n";
+		waitKey(100);
 	}
 
 
